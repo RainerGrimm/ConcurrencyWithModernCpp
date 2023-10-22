@@ -5,11 +5,11 @@
 #include <thread>
 #include <vector>
 
-constexpr long long size{100000000};   
+constexpr long long size{10000000};   
 
 struct Sum{
-    long long a{0};
-    long long b{0};
+    alignas(64) long long a{0};
+    alignas(64) long long b{0};
 };
 
 int main(){

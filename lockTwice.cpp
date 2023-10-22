@@ -1,5 +1,3 @@
-// lockTwice.cpp
-
 #include <iostream>
 #include <mutex>
 

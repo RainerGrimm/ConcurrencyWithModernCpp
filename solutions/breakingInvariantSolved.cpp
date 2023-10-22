@@ -4,20 +4,28 @@
 #include <thread>
 
 struct Account{
-  std::atomic<int> balance{100};                               
+  int balance{100};                               
 };
-                                                               
+
+std::mutex mutAccount;
+
 void transferMoney(int amount, Account& from, Account& to){
   using namespace std::chrono_literals;
-  if (from.balance >= amount){
-    from.balance -= amount;  
-    std::this_thread::sleep_for(1ns);                          
-    to.balance += amount;
+  {
+    std::lock_guard<std::mutex> lock(mutAccount); 
+    if (from.balance >= amount){
+      from.balance -= amount;  
+      std::this_thread::sleep_for(10ns);                          
+      to.balance += amount;
+    }
   }
 }
 
- void printSum(Account& a1, Account& a2){
-  std::cout << (a1.balance + a2.balance) << '\n';         
+void printSum(Account& a1, Account& a2){  
+  {  
+    std::lock_guard<std::mutex> lock(mutAccount);
+    std::cout << (a1.balance + a2.balance) << '\n';         
+  }
 }
 
 int main(){

@@ -1,5 +1,3 @@
-// addMoney.cpp
-
 #include <functional>
 #include <iostream>
 #include <thread>
