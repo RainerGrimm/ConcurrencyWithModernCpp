@@ -1,43 +1,35 @@
-#include <iostream>
-#include <vector>
-#include <coroutine>
+#include <algorithm>
+#include <atomic>
 #include <chrono>
+#include <coroutine>
+#include <functional>
+#include <iostream>
+#include <iterator>
+#include <memory>
+#include <source_location>
 #include <thread>
 #include <utility>
-#include <functional>
-#include <memory>
-#include <algorithm>
-#include <iterator>
-#include <atomic>
+#include <vector>
 
 
-
-#define FUNC() std::cout << __func__ << '\n'
-
-namespace details
-{
-    template <typename InputIterator>
-    void printIterable(InputIterator first, InputIterator last)
-    {
-        using value_type = std::decay_t<decltype(*first)>;
-        std::cout << '[';
-        if constexpr (std::is_same_v<std::uint8_t, value_type>) {
-            std::copy(first, std::prev(last), std::ostream_iterator<std::uint16_t>(std::cout, ", "));
-            std::cout << static_cast<std::uint16_t>(*std::prev(last)) << "]\n";
-        }
-        else
-        {
-            std::copy(first, std::prev(last), std::ostream_iterator<value_type>(std::cout, ", "));
-            std::cout << *std::prev(last) << "]\n";
-        }
-    }
-
-    template <typename Container>
-    void printContainer(const Container& container)
-    {
-        printIterable(std::cbegin(container), std::cend(container));
-    }
+void funcName(const std::source_location location = std::source_location::current()) {
+    std::cout << location.function_name() << '\n';
 }
+
+
+template <typename Container>
+void printContainer(const Container& container)
+{
+    typedef typename Container::value_type value_type;
+    auto first = std::cbegin(container);
+    auto last = std::cend(container);
+
+    std::cout << " [";
+    std::copy(first, std::prev(last), std::ostream_iterator<value_type>(std::cout, ", "));
+    std::cout << *std::prev(last) << "]\n";
+}
+
+
 
 
 class [[nodiscard]] AudioDataResult final
@@ -127,10 +119,10 @@ class [[nodiscard]] AudioDataResult final
         }
 
         // d-tor: RAII
-        ~AudioDataResult() { if (handle_) {FUNC(); handle_.destroy();}}
+        ~AudioDataResult() { if (handle_) {funcName(); handle_.destroy();}}
 
         // For resuming the producer - at the point when the data are consumed
-        void resume() {if (not handle_.done()) { FUNC(); handle_.resume();}}
+        void resume() {if (not handle_.done()) { funcName(); handle_.resume();}}
     
     private:
         AudioDataResult(handle_type handle) noexcept : handle_(handle) {}
@@ -144,7 +136,7 @@ using data_type = std::vector<int>;
 AudioDataResult producer(const data_type& data) 
 {
     for (std::size_t i = 0; i < 5; ++i) {
-        FUNC();
+        funcName();
         co_yield data;
     }
     co_yield data_type{}; // exit criteria
@@ -156,12 +148,11 @@ AudioDataResult consumer(AudioDataResult& audioDataResult)
 {
     for(;;)
     {
-        FUNC();
+        funcName();
         const auto data = co_await audioDataResult;
         if (data.empty()) {std::cout << "No data - exit!\n"; break;}
         std::cout << "Data received:";
-        details::printContainer(data);
-
+        printContainer(data);
         audioDataResult.resume(); // resume producer
     }
     co_return;
