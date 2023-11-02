@@ -1,5 +1,3 @@
-// threadMoved.cpp
-
 #include <iostream> 
 #include <thread> 
 #include <utility>

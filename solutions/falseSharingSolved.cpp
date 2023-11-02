@@ -5,7 +5,7 @@
 #include <thread>
 #include <vector>
 
-constexpr long long size{10000000};   
+constexpr long long size{100'000'000};   
 
 struct Sum{
     alignas(64) long long a{0};

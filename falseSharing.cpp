@@ -5,7 +5,7 @@
 #include <thread>
 #include <vector>
 
-constexpr long long size{100000000};   
+constexpr long long size{100'000'000};   
 
 struct Sum{
     long long a{0};

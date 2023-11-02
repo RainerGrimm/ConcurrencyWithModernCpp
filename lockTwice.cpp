@@ -15,6 +15,4 @@ int main(){
 
     mut.lock();
 
-    std::cout << "third lock call" << '\n';
-
 }
