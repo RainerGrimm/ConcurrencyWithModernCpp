@@ -29,7 +29,7 @@ int main(){
     
     std::cout << '\n';
     
-    std::thread t(calcProducts, std::ref(task), allPairs);
+    std::thread t(calcProducts, std::ref(task), std::ref(allPairs));
     t.join();
     
     std::cout << '\n';
