@@ -1,6 +1,4 @@
-#include <concepts>
 #include <coroutine>
-#include <functional>
 #include <iostream>
 #include <queue>
 #include <utility>
@@ -26,13 +24,9 @@ struct Task {
   std::coroutine_handle<promise_type> handle;
 };
 
-using job = std::pair<int, std::coroutine_handle<>>;
-
-template <typename Comparator = std::ranges::less>
-requires std::predicate<decltype(Comparator()), job, job>
 class Scheduler {
 
-  std::priority_queue<job, std::vector<job>, Comparator> _prioTasks;
+  std::priority_queue<std::pair<int, std::coroutine_handle<>>> _prioTasks;
 
   public: 
 
@@ -57,20 +51,13 @@ class Scheduler {
 
 };
 
-Task TaskA() {
-  std::cout << "TaskA start\n";
-  co_await std::suspend_always();
-  std::cout << "TaskA execute\n";
-  co_await std::suspend_always();
-  std::cout << "TaskA finish\n";
-}
 
-Task TaskB() {
-  std::cout << " TaskB start\n";
+Task createTask(const std::string& name) {
+  std::cout << name << " start\n";
   co_await std::suspend_always();
-  std::cout << " TaskB execute\n";
+  std::cout << name << " execute\n";
   co_await std::suspend_always();
-  std::cout << " TaskB finish\n";
+  std::cout << name << " finish\n";
 }
 
 
@@ -80,17 +67,17 @@ int main() {
 
   Scheduler scheduler1;
 
-  scheduler1.emplace(0, TaskA().get_handle());
-  scheduler1.emplace(1, TaskB().get_handle());
+  scheduler1.emplace(0, createTask("TaskA").get_handle());
+  scheduler1.emplace(1, createTask("  TaskB").get_handle());
 
   scheduler1.schedule();
 
   std::cout << '\n';
 
-  Scheduler<std::ranges::greater> scheduler2;
+  Scheduler scheduler2;
 
-  scheduler2.emplace(0, TaskA().get_handle());
-  scheduler2.emplace(1, TaskB().get_handle());
+  scheduler2.emplace(1, createTask("TaskA").get_handle());
+  scheduler2.emplace(0, createTask("  TaskB").get_handle());
 
   scheduler2.schedule();
 

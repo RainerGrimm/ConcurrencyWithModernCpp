@@ -65,7 +65,7 @@ class [[nodiscard]] AudioDataResult final
                 std::suspend_always yield_value(Data&& value) 
                 {
                     data_ = std::forward<Data>(value);
-                    data_ready_.store(true, std::memory_order::relaxed);
+                    data_ready_.store(true);
                     return {};
                 }
 
@@ -74,7 +74,7 @@ class [[nodiscard]] AudioDataResult final
                 {
                     explicit AudioDataAwaiter(promise_type& promise) noexcept: promise_(promise) {}
 
-                    bool await_ready() const { return promise_.data_ready_.load(std::memory_order::relaxed);}
+                    bool await_ready() const { return promise_.data_ready_.load();}
                     
                     void await_suspend(handle_type) const
                     {
@@ -140,13 +140,11 @@ AudioDataResult producer(const data_type& data)
         co_yield data;
     }
     co_yield data_type{}; // exit criteria
-
-    co_return;
 }
 
 AudioDataResult consumer(AudioDataResult& audioDataResult) 
 {
-    for(;;)
+    while(true)
     {
         funcName();
         const auto data = co_await audioDataResult;
@@ -155,7 +153,6 @@ AudioDataResult consumer(AudioDataResult& audioDataResult)
         printContainer(data);
         audioDataResult.resume(); // resume producer
     }
-    co_return;
 }
 
 int main() 
@@ -168,5 +165,4 @@ int main()
     }
 
     std::cout << "bye-bye!\n";
-    return 0;
 }
