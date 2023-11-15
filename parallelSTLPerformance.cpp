@@ -36,21 +36,21 @@ int main(){
     
   getExecutionTime("std::execution::seq", [workVec]() mutable {
     std::transform(std::execution::seq, workVec.begin(), workVec.end(), 
-		           workVec.begin(), 
+		               workVec.begin(), 
                    [](double arg){ return std::tan(arg); }
                   );
     });
         
   getExecutionTime("std::execution::par", [workVec]() mutable {
     std::transform(std::execution::par, workVec.begin(), workVec.end(), 
-		           workVec.begin(), 
+		               workVec.begin(), 
                    [](double arg){ return std::tan(arg); }
                   );
   });
      
   getExecutionTime("std::execution::par_unseq", [workVec]() mutable {
     std::transform(std::execution::par_unseq, workVec.begin(), workVec.end(), 
-		           workVec.begin(), 
+		               workVec.begin(), 
                    [](double arg){ return std::tan(arg); }
                   );
   });

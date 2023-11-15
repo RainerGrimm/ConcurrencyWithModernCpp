@@ -1,5 +1,3 @@
-// newAlgorithm.cpp
-
 #include <algorithm>
 #include <execution>
 #include <numeric>
