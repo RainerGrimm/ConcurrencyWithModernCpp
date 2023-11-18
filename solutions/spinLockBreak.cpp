@@ -6,11 +6,11 @@ class Spinlock{
 public:
 
   void lock(){
-    while( flag.test_and_set() );
+    while( flag.test_and_set(std::memory_order_acq_rel) );
   }
 
   void unlock(){
-    flag.clear();
+    flag.clear(std::memory_order_release);
   }
 
 };

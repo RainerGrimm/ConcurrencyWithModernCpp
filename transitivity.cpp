@@ -1,5 +1,3 @@
-// transitivity.cpp
-
 #include <atomic>
 #include <iostream>
 #include <thread>
