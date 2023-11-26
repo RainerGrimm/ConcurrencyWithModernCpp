@@ -8,10 +8,10 @@
 
 constexpr long long size = 100'000'000;   
 
-constexpr long long fir =  25000000;
-constexpr long long sec =  50000000;
-constexpr long long thi =  75000000;
-constexpr long long fou = 100000000;
+constexpr long long fir =  25'000'000;
+constexpr long long sec =  50'000'000;
+constexpr long long thi =  75'000'000;
+constexpr long long fou = 100'000'000;
 
 thread_local unsigned long long tmpSum = 0;
 

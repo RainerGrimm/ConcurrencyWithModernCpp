@@ -3,7 +3,7 @@
 #include <random>
 #include <vector>
 
-constexpr long long size = 100000000;
+constexpr long long size = 100'000'000;
 
 int main(){
 
